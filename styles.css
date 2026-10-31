@@ -1,0 +1,1157 @@
+/*
+ * NOCTIS — styles.css
+ * Minimal, premium, dark. No gradients. No blur. No glow.
+ * Design tokens, global resets, and section-by-section styles.
+ */
+
+/* ── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,100..900&family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap');
+
+/* ── Design Tokens ────────────────────────────────────────────────────────── */
+:root {
+  --asphalt:  #07080A;
+  --graphite: #121418;
+  --fog:      #8A8F98;
+  --bone:     #EDEAE4;
+  --xenon:    #CFE3FF;
+  --taillight:#E1251B;
+  --hairline: rgba(237, 234, 228, 0.12);
+
+  /* Typography */
+  --font-display: 'Archivo', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* Easing */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Spacing */
+  --nav-h: 60px;
+}
+
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* overflow-x: clip allows sticky to work; never overflow: hidden on ancestors */
+  overflow-x: clip;
+  scroll-behavior: auto; /* We handle smoothness ourselves */
+  background: var(--asphalt);
+}
+
+body {
+  overflow-x: clip;
+  background: var(--asphalt);
+  color: var(--bone);
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.1vw, 17px);
+  line-height: 1.6;
+  cursor: none; /* Hidden on fine-pointer — restored for touch in JS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Restore cursor for touch / coarse pointer */
+@media (pointer: coarse) {
+  body { cursor: auto; }
+}
+
+/* ── Typography helpers ───────────────────────────────────────────────────── */
+.t-display {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: clamp(40px, 7vw, 120px);
+  line-height: 0.95;
+  color: var(--bone);
+}
+
+.t-display--heavy {
+  font-weight: 400;
+}
+
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.9vw, 12px);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fog);
+}
+
+.t-body {
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.1vw, 17px);
+  line-height: 1.6;
+  max-width: 52ch;
+  color: var(--bone);
+}
+
+/* ── Line-reveal animation ────────────────────────────────────────────────── */
+/* Wrap each line in .line-mask, place .line-inner inside */
+.line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+.line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s var(--ease);
+}
+
+.line-inner.revealed {
+  transform: translateY(0);
+}
+
+/* ── Links ────────────────────────────────────────────────────────────────── */
+a {
+  color: var(--bone);
+  text-decoration: none;
+}
+
+.text-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fog);
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 2px;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+
+.text-link:hover {
+  color: var(--bone);
+  border-color: var(--bone);
+}
+
+/* ── Hairline ─────────────────────────────────────────────────────────────── */
+.hairline {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--hairline);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* PRELOADER                                                                    */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+#preloader .pre-wordmark {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: clamp(28px, 4vw, 56px);
+  color: var(--bone);
+}
+
+#preloader .pre-track {
+  width: clamp(200px, 40vw, 480px);
+  height: 1px;
+  background: rgba(207, 227, 255, 0.15);
+  position: relative;
+}
+
+#preloader .pre-bar {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 1px;
+  background: var(--xenon);
+  width: 0%;       /* grows outward: set via transform in JS */
+  transform-origin: center;
+  transition: none;
+}
+
+#preloader .pre-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--fog);
+  margin-top: 12px;
+}
+
+#preloader.exit {
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* CUSTOM CURSOR (desktop / fine pointer only)                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@media (pointer: fine) {
+  #cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9000;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  #cursor .cursor-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--xenon);
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s;
+  }
+
+  #cursor .cursor-ring {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--xenon);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s var(--ease), height 0.3s var(--ease),
+                border-radius 0.3s var(--ease), opacity 0.2s;
+  }
+
+  #cursor .cursor-bar {
+    position: absolute;
+    width: 0px;
+    height: 2px;
+    background: var(--xenon);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s var(--ease), opacity 0.3s var(--ease);
+    opacity: 0;
+  }
+
+  #cursor .cursor-label {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--xenon);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  /* Hover state: bar mode */
+  #cursor.bar-mode .cursor-dot  { opacity: 0; }
+  #cursor.bar-mode .cursor-ring { width: 0; height: 0; border-width: 0; opacity: 0; }
+  #cursor.bar-mode .cursor-bar  { width: 44px; opacity: 1; }
+  #cursor.bar-mode .cursor-label { opacity: 1; }
+
+  #cursor.pressed .cursor-bar  { background: #ffffff; }
+  #cursor.pressed .cursor-dot  { background: #ffffff; }
+  #cursor.pressed .cursor-ring { border-color: #ffffff; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* NAV                                                                          */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(24px, 4vw, 64px);
+  mix-blend-mode: difference;
+  transition: transform 0.5s var(--ease);
+}
+
+#nav.hidden {
+  transform: translateY(-100%);
+}
+
+.nav-wordmark {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 300;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bone);
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* FILM GRAIN OVERLAY                                                           */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#grain {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  pointer-events: none;
+  opacity: 0.035;
+  image-rendering: pixelated;
+  /* JS will set background-image to the noise canvas tile, shifted randomly */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* PROGRESS LINE (bottom of each pinned section)                                */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.progress-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--xenon);
+  width: 0%;
+  transition: none;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* PINNED SECTION WRAPPER                                                       */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.pin-wrapper {
+  /* Height set inline via JS from config */
+  position: relative;
+  /* NEVER overflow: hidden here — it breaks sticky */
+}
+
+.pin-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden; /* Only on the stage itself, not wrapper */
+  background: var(--asphalt);
+}
+
+.pin-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 1 — HERO                                                             */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#hero-stage {
+  position: relative;
+}
+
+/* HUD: left edge overlay */
+.hero-hud {
+  position: absolute;
+  left: clamp(20px, 3vw, 48px);
+  bottom: clamp(32px, 5vh, 80px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 20;
+}
+
+.hud-chapter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fog);
+}
+
+.hud-tick {
+  display: inline-block;
+  width: 2px;
+  height: 10px;
+  background: var(--taillight);
+}
+
+.hud-values {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hud-row {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  color: var(--fog);
+  text-transform: uppercase;
+}
+
+/* Hero text chapters */
+.hero-text-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.hero-chapter {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+  pointer-events: none;
+}
+
+.hero-chapter.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Chapter 1: top-left area (sky) */
+.hero-ch1 {
+  top: clamp(80px, 12vh, 140px);
+  left: clamp(40px, 6vw, 100px);
+}
+
+/* Chapter 2, 3: upper-right or upper-left sky */
+.hero-ch2 {
+  top: clamp(80px, 14vh, 160px);
+  right: clamp(40px, 6vw, 100px);
+  text-align: right;
+}
+
+.hero-ch3 {
+  top: clamp(80px, 14vh, 160px);
+  left: clamp(40px, 6vw, 100px);
+}
+
+/* Chapter 4: empty sky area (never over the car) */
+.hero-ch4 {
+  top: clamp(80px, 12vh, 140px);
+  left: clamp(40px, 6vw, 100px);
+}
+
+.hero-ch4 .t-display {
+  font-size: clamp(64px, 10vw, 160px);
+}
+
+.hero-scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.scroll-hint-line {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--xenon);
+  animation: pulse-line 2s var(--ease) infinite;
+}
+
+@keyframes pulse-line {
+  0%, 100% { opacity: 0.3; width: 24px; }
+  50%       { opacity: 1;   width: 48px; }
+}
+
+.hero-specs {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--fog);
+  text-transform: uppercase;
+}
+
+.hero-discover {
+  margin-top: 20px;
+  pointer-events: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 2 — STATEMENT                                                        */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#statement {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(40px, 6vw, 100px);
+  text-align: center;
+  position: relative;
+}
+
+.statement-label {
+  margin-bottom: 32px;
+}
+
+.statement-words {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 300;
+  font-size: clamp(28px, 4.5vw, 76px);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: var(--bone);
+}
+
+.statement-words .word {
+  display: inline-block;
+  opacity: 0.15;
+  transition: opacity 0.5s var(--ease);
+  margin-right: 0.22em;
+}
+
+.statement-words .word.lit {
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 3 — DISMANTLE                                                        */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#dismantle-stage {
+  position: relative;
+}
+
+.dismantle-title {
+  position: absolute;
+  top: clamp(24px, 4vh, 56px);
+  left: clamp(32px, 5vw, 80px);
+  z-index: 20;
+}
+
+/* Callout overlay */
+.callouts-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.callout {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+  /* Each callout fills the whole stage so we can position dot + label freely */
+  inset: 0;
+  pointer-events: none;
+}
+
+.callout.visible {
+  opacity: 1;
+}
+
+/* SVG connector lines */
+#dismantle-stage svg line {
+  transition: opacity 0.6s var(--ease);
+}
+
+/* Callout label */
+.callout-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.callout-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--xenon);
+}
+
+.callout-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--fog);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 4 — LINEUP                                                           */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#lineup {
+  padding-top: clamp(60px, 8vh, 120px);
+  padding-bottom: 0;
+  background: var(--asphalt);
+}
+
+.lineup-header {
+  padding: 0 clamp(24px, 4vw, 64px);
+  margin-bottom: clamp(32px, 5vh, 64px);
+}
+
+.lineup-header .t-display {
+  margin-top: 16px;
+}
+
+/* Accordion container */
+.lineup-slides {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  border-top: 1px solid var(--hairline);
+  overflow: hidden;
+}
+
+.lineup-slide {
+  /* Closed */
+  flex: 0 0 12vw;
+  border-right: 1px solid var(--hairline);
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  transition: flex-basis 0.7s var(--ease), flex-grow 0.7s var(--ease);
+  outline: none;
+}
+
+.lineup-slide:last-child {
+  border-right: none;
+}
+
+/* Open slide gets the remaining space */
+.lineup-slide.open {
+  flex: 1 0 0%;
+}
+
+/* Closed slide content */
+.slide-closed-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(16px, 2vh, 28px) 0;
+  transition: opacity 0.3s var(--ease);
+  z-index: 5;
+}
+
+.slide-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--fog);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.slide-name-rotated {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--fog);
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Closed image: greyscale + dark, cropped tight to the front light bar */
+.slide-img-closed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 88% center;
+  filter: grayscale(1) brightness(0.25);
+  transition: filter 0.7s var(--ease);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lineup-slide.open .slide-img-closed {
+  display: none;
+}
+
+/* Open slide content */
+.slide-open-content {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+  z-index: 5;
+  overflow: hidden;
+}
+
+.lineup-slide.open .slide-open-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lineup-slide.open .slide-closed-content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Open slide car image */
+.slide-img-open {
+  position: absolute;
+  bottom: 28%;
+  left: 6%;
+  width: 88%;
+  height: auto;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateX(6%);
+  transition: transform 0.7s var(--ease), opacity 0.5s var(--ease);
+  opacity: 0;
+  z-index: 2;
+}
+
+.lineup-slide.open .slide-img-open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Floor line */
+.slide-floor {
+  position: absolute;
+  bottom: 28%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hairline);
+  z-index: 3;
+}
+
+/* Open slide text block */
+.slide-text-block {
+  position: absolute;
+  left: clamp(20px, 3vw, 48px);
+  top: clamp(24px, 4vh, 48px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.slide-text-block .t-display {
+  font-size: clamp(32px, 5vw, 80px);
+}
+
+/* Bottom info block */
+.slide-info-block {
+  position: absolute;
+  left: clamp(20px, 3vw, 48px);
+  bottom: clamp(24px, 4vh, 48px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slide-tagline {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1vw, 16px);
+  color: var(--fog);
+  max-width: 36ch;
+}
+
+.slide-specs {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--fog);
+  display: flex;
+  gap: 20px;
+}
+
+.slide-specs span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slide-specs .spec-value {
+  color: var(--bone);
+  font-size: 13px;
+}
+
+.slide-colors {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-swatch {
+  width: 12px;
+  height: 12px;
+  display: block;
+  cursor: none;
+  transition: outline-offset 0.2s;
+}
+
+.color-swatch.active {
+  outline: 1px solid var(--bone);
+  outline-offset: 2px;
+}
+
+.slide-configure {
+  margin-top: 4px;
+}
+
+/* Staggered text reveal for open slide (0.06s stagger) */
+.slide-text-line {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+
+.lineup-slide.open .slide-text-block .slide-text-line:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.12s;
+}
+
+.lineup-slide.open .slide-text-block .slide-text-line:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.18s;
+}
+
+.lineup-slide.open .slide-info-block .slide-tagline {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.24s;
+}
+
+.lineup-slide.open .slide-info-block .slide-specs {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.30s;
+}
+
+.lineup-slide.open .slide-info-block .slide-colors {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.36s;
+}
+
+.lineup-slide.open .slide-info-block .slide-configure {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.42s;
+}
+
+/* Entrance animation */
+.lineup-slide {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    flex-basis 0.7s var(--ease),
+    flex-grow 0.7s var(--ease),
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
+}
+
+.lineup-slide.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 5 — RESERVE                                                          */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#reserve {
+  height: 100vh;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 24px;
+  padding: clamp(40px, 6vw, 80px);
+}
+
+#reserve .t-display {
+  font-size: clamp(48px, 8vw, 128px);
+}
+
+#reserve .t-body {
+  color: var(--fog);
+}
+
+.reserve-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 32px;
+  border: 1px solid var(--xenon);
+  background: transparent;
+  cursor: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--xenon);
+  position: relative;
+  overflow: hidden;
+  transition: color 0.35s var(--ease), background 0.35s var(--ease);
+  outline: none;
+}
+
+.reserve-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--taillight);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.35s var(--ease);
+}
+
+.reserve-btn:hover,
+.reserve-btn:focus-visible {
+  background: var(--xenon);
+  color: var(--asphalt);
+}
+
+.reserve-btn:hover::before,
+.reserve-btn:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.reserve-btn:focus-visible {
+  outline: 2px solid var(--xenon);
+  outline-offset: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* FOOTER                                                                       */
+/* ─────────────────────────────────────────────────────────────────────────── */
+#footer {
+  border-top: 1px solid var(--hairline);
+  padding: clamp(40px, 6vh, 80px) clamp(24px, 4vw, 64px);
+  background: var(--asphalt);
+}
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.footer-wordmark {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 300;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bone);
+}
+
+.footer-col-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fog);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fog);
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: var(--bone);
+}
+
+.footer-copyright {
+  border-top: 1px solid var(--hairline);
+  margin-top: 48px;
+  padding-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--fog);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* FOCUS VISIBLE (xenon light bar outline)                                      */
+/* ─────────────────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 1px solid var(--xenon);
+  outline-offset: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* REDUCED MOTION                                                                */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  body {
+    cursor: auto !important;
+  }
+
+  #cursor {
+    display: none !important;
+  }
+
+  /* Pinned sections become static in JS, but we disable their transitions too */
+  .pin-wrapper {
+    height: auto !important;
+  }
+
+  .pin-stage {
+    position: relative !important;
+    height: auto !important;
+  }
+
+  .lineup-slide {
+    transition: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* MOBILE (< 768px)                                                             */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Nav */
+  .nav-links { gap: 16px; }
+
+  /* Statement */
+  #statement { padding: 40px 24px; }
+
+  /* Lineup: stack vertically */
+  .lineup-slides {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .lineup-slide {
+    flex: none !important;
+    height: 72px;
+    border-right: none;
+    border-bottom: 1px solid var(--hairline);
+    overflow: hidden;
+    transition: height 0.7s var(--ease), opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  }
+
+  .lineup-slide.open {
+    height: clamp(480px, 80vh, 560px);
+  }
+
+  .slide-closed-content {
+    flex-direction: row;
+    padding: 0 24px;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .slide-name-rotated {
+    writing-mode: horizontal-tb;
+    transform: none;
+    flex: none;
+  }
+
+  .slide-img-open {
+    position: absolute;
+    width: 90%;
+    left: 5%;
+    bottom: 34%;
+    height: auto;
+    transform: translateX(6%);
+  }
+
+  .lineup-slide.open .slide-img-open {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .slide-floor {
+    bottom: 34%;
+  }
+
+  .slide-info-block {
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+  }
+
+  .slide-specs {
+    gap: 12px;
+  }
+
+  /* Footer: single column */
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Hero text: smaller */
+  .hero-ch2, .hero-ch3 {
+    right: 20px;
+    left: 20px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,10 @@
+# Raw extracted frame folders and zip archives
+frames_raw/
+*.zip
+*.zip.zip
+
+# Node modules & OS metadata
+node_modules/
+.DS_Store
+Thumbs.db
+
